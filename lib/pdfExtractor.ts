@@ -45,9 +45,8 @@ function parseQuestionsFromText(text: string): Question[] {
   let questionNumber = 1;
 
   for (const pattern of questionPatterns) {
-    const matches = text.matchAll(pattern);
-    
-    for (const match of matches) {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
       const questionText = match[2]?.trim();
       if (questionText && questionText.length > 10) {
         const question: Question = {
@@ -56,11 +55,11 @@ function parseQuestionsFromText(text: string): Question[] {
           estimatedMarks: estimateMarks(questionText),
           type: determineQuestionType(questionText)
         };
-        
+
         questions.push(question);
       }
     }
-    
+
     if (questions.length > 0) break; // Use first successful pattern
   }
 
