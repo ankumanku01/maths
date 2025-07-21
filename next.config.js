@@ -1,16 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable SSR for client-heavy application
+  reactStrictMode: true,
+  swcMinify: true,
+  
+  // Disable static optimization for pages with getServerSideProps
   experimental: {
-    esmExternals: false
+    esmExternals: false,
   },
+  
   images: {
-    domains: ['edumanage-prod.netlify.app'],
+    domains: ['edumanage-prod.netlify.app', 'localhost'],
+    unoptimized: true,
   },
-
-  // Netlify specific settings
-  trailingSlash: true,
-
+  
+  // For Netlify deployment
+  trailingSlash: false,
+  
   // Security headers
   async headers() {
     return [
