@@ -1,31 +1,26 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { query } from '@/lib/db';
 
 export async function POST() {
   try {
-    await connectDB();
-
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'sujan1nepal@gmail.com' });
+    const existingAdmin = await query(
+      'SELECT id FROM users WHERE email = $1',
+      ['sujan1nepal@gmail.com']
+    );
     
-    if (existingAdmin) {
+    if (existingAdmin.rows.length > 0) {
       return NextResponse.json({ message: 'Admin user already exists' });
     }
 
     // Create admin user
     const hashedPassword = await bcrypt.hash('precioussn', 12);
     
-    const adminUser = new User({
-      email: 'sujan1nepal@gmail.com',
-      password: hashedPassword,
-      role: 'admin',
-      firstName: 'Sujan',
-      lastName: 'Nepal',
-    });
-
-    await adminUser.save();
+    await query(
+      'INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES ($1, $2, $3, $4, $5)',
+      ['sujan1nepal@gmail.com', hashedPassword, 'admin', 'Sujan', 'Nepal']
+    );
 
     return NextResponse.json({ message: 'Admin user created successfully' });
   } catch (error) {
