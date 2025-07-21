@@ -1,16 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disable SSR for client-heavy application
   experimental: {
-    serverActions: {
-      allowedOrigins: ['edumanage-prod.netlify.app', 'localhost:3000']
-    }
+    esmExternals: false
   },
   images: {
     domains: ['edumanage-prod.netlify.app'],
   },
-  // Enable static export for better Netlify compatibility
-  output: 'standalone',
-  
+
+  // Netlify specific settings
+  trailingSlash: true,
+
   // Security headers
   async headers() {
     return [
