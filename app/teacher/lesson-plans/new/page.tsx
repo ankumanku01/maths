@@ -16,6 +16,7 @@ export default function NewLessonPlanPage() {
     learningObjectives: [''],
     materialsNeeded: [''],
   });
+  const [uploadedFile, setUploadedFile] = useState<{ url: string; filename: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
