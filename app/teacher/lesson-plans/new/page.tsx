@@ -230,24 +230,31 @@ export default function NewLessonPlanPage() {
           <p className="text-sm text-gray-600 mb-4">
             Upload your detailed lesson plan PDF document.
           </p>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <div className="text-gray-400 text-4xl mb-4">📄</div>
-            <p className="text-sm text-gray-600 mb-2">
-              Drag and drop your PDF file here, or click to browse
-            </p>
-            <input
-              type="file"
+
+          {uploadedFile ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">✅</span>
+                <div>
+                  <p className="font-medium text-green-800">File uploaded successfully</p>
+                  <p className="text-sm text-green-600">{uploadedFile.filename}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUploadedFile(null)}
+                  className="ml-auto text-green-600 hover:text-green-800"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          ) : (
+            <FileUpload
+              uploadType="lesson-plan"
               accept=".pdf"
-              className="hidden"
-              id="lesson-plan-file"
+              onUploadComplete={setUploadedFile}
             />
-            <label
-              htmlFor="lesson-plan-file"
-              className="btn-secondary inline-block cursor-pointer"
-            >
-              Choose File
-            </label>
-          </div>
+          )}
         </div>
 
         {/* Submit Buttons */}
