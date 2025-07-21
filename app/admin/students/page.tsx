@@ -43,27 +43,20 @@ export default function StudentsManagement() {
 
   const fetchStudents = async () => {
     try {
-      // TODO: Replace with actual API call
-      setStudents([
-        {
-          _id: '1',
-          firstName: 'Emma',
-          lastName: 'Johnson',
-          grade: '4th Grade',
-          parents: ['parent1'],
-          teachers: ['teacher1'],
-          createdAt: '2024-01-15'
-        },
-        {
-          _id: '2',
-          firstName: 'Michael',
-          lastName: 'Johnson',
-          grade: '2nd Grade',
-          parents: ['parent1'],
-          teachers: ['teacher2'],
-          createdAt: '2024-01-10'
-        }
-      ]);
+      const response = await fetch('/api/admin/students');
+      if (response.ok) {
+        const studentsData = await response.json();
+        setStudents(studentsData.map((student: any) => ({
+          _id: student.id,
+          firstName: student.first_name,
+          lastName: student.last_name,
+          grade: student.grade,
+          photo: student.photo_url,
+          parents: student.parents || [],
+          teachers: student.teachers || [],
+          createdAt: student.created_at
+        })));
+      }
     } catch (error) {
       console.error('Error fetching students:', error);
     }
