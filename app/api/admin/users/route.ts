@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import bcrypt from 'bcryptjs';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { query } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -12,11 +11,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectDB();
-    const users = await User.find({ role: { $ne: 'admin' } }).select('-password');
+    const result = await query(
+      'SELECT id, email, role, first_name, last_name, created_at FROM users WHERE role != $1 ORDER BY created_at DESC',
+      ['admin']
+    );
 
-    return NextResponse.json(users);
+    return NextResponse.json(result.rows);
   } catch (error) {
+    console.error('Error fetching users:', error);
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }
@@ -35,11 +37,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
-    await connectDB();
-
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingUser = await query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existingUser.rows.length > 0) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
     }
 
@@ -47,20 +47,14 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create user
-    const user = new User({
-      email,
-      password: hashedPassword,
-      role,
-      firstName,
-      lastName,
-    });
+    const result = await query(
+      'INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, role, first_name, last_name, created_at',
+      [email, hashedPassword, role, firstName, lastName]
+    );
 
-    await user.save();
-
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = user.toObject();
-    return NextResponse.json(userWithoutPassword, { status: 201 });
+    return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
+    console.error('Error creating user:', error);
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
   }
 }
