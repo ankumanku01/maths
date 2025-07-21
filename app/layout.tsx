@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Next.js App',
-  description: 'A Next.js application',
+  title: 'EduManage - Educational Management System',
+  description: 'A comprehensive educational management system for teachers, parents, and administrators',
 }
 
 export default function RootLayout({
