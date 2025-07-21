@@ -37,9 +37,9 @@ function parseQuestionsFromText(text: string): Question[] {
   
   // Common question patterns
   const questionPatterns = [
-    /(\d+)\.\s*(.+?)(?=\n\d+\.|$)/gs, // 1. Question text
-    /Q(\d+)[\.\)]\s*(.+?)(?=\nQ\d+|$)/gs, // Q1) Question text
-    /Question\s*(\d+):\s*(.+?)(?=\nQuestion\s*\d+|$)/gs, // Question 1: text
+    /(\d+)\.\s*(.+?)(?=\n\d+\.|$)/g, // 1. Question text
+    /Q(\d+)[\.\)]\s*(.+?)(?=\nQ\d+|$)/g, // Q1) Question text
+    /Question\s*(\d+):\s*(.+?)(?=\nQuestion\s*\d+|$)/g, // Question 1: text
   ];
 
   let questionNumber = 1;
