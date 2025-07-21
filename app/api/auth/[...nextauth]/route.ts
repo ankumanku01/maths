@@ -1,8 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { query } from '@/lib/db';
 
 const handler = NextAuth({
   providers: [
@@ -18,23 +17,26 @@ const handler = NextAuth({
         }
 
         try {
-          await connectDB();
-          const user = await User.findOne({ email: credentials.email });
+          const result = await query(
+            'SELECT * FROM users WHERE email = $1 AND is_active = true',
+            [credentials.email]
+          );
 
-          if (!user) {
+          if (result.rows.length === 0) {
             return null;
           }
 
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+          const user = result.rows[0];
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash);
 
           if (!isPasswordValid) {
             return null;
           }
 
           return {
-            id: user._id.toString(),
+            id: user.id,
             email: user.email,
-            name: `${user.firstName} ${user.lastName}`,
+            name: `${user.first_name} ${user.last_name}`,
             role: user.role,
           };
         } catch (error) {
