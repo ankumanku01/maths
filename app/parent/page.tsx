@@ -25,20 +25,35 @@ export default function ParentDashboard() {
   const [progressSummary, setProgressSummary] = useState<ProgressSummary[]>([]);
 
   useEffect(() => {
-    // TODO: Fetch actual children and progress data from API
-    const mockChildren = [
-      { id: '1', name: 'Emma Johnson', grade: '4th Grade', photo: undefined },
-      { id: '2', name: 'Michael Johnson', grade: '2nd Grade', photo: undefined },
-    ];
-    
-    const mockProgress = [
-      { studentId: '1', studentName: 'Emma Johnson', recentTests: 4, averageScore: 87, improvement: 15 },
-      { studentId: '2', studentName: 'Michael Johnson', recentTests: 3, averageScore: 92, improvement: 8 },
-    ];
-
-    setChildren(mockChildren);
-    setProgressSummary(mockProgress);
+    fetchChildren();
   }, []);
+
+  const fetchChildren = async () => {
+    try {
+      const response = await fetch('/api/parent/children');
+      if (response.ok) {
+        const data = await response.json();
+        setChildren(data.map((child: any) => ({
+          id: child.id,
+          name: `${child.first_name} ${child.last_name}`,
+          grade: child.grade,
+          photo: child.photo_url
+        })));
+
+        // Mock progress data for now - implement actual progress API later
+        const mockProgress = data.map((child: any) => ({
+          studentId: child.id,
+          studentName: `${child.first_name} ${child.last_name}`,
+          recentTests: Math.floor(Math.random() * 5) + 2,
+          averageScore: Math.floor(Math.random() * 20) + 80,
+          improvement: Math.floor(Math.random() * 20) + 5,
+        }));
+        setProgressSummary(mockProgress);
+      }
+    } catch (error) {
+      console.error('Error fetching children:', error);
+    }
+  };
 
   const ChildCard = ({ child }: { child: Student }) => {
     const progress = progressSummary.find(p => p.studentId === child.id);
