@@ -35,29 +35,22 @@ export default function NewMessagePage() {
 
   const fetchMyStudents = async () => {
     try {
-      // TODO: Replace with actual API call to get teacher's students
-      const mockStudents: Student[] = [
-        {
-          _id: '1',
-          firstName: 'Emma',
-          lastName: 'Johnson',
-          grade: '4th Grade',
-          parents: [
-            { _id: 'parent1', firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.johnson@email.com' },
-            { _id: 'parent2', firstName: 'David', lastName: 'Johnson', email: 'david.johnson@email.com' }
-          ]
-        },
-        {
-          _id: '2',
-          firstName: 'Alex',
-          lastName: 'Davis',
-          grade: '4th Grade',
-          parents: [
-            { _id: 'parent3', firstName: 'Mike', lastName: 'Davis', email: 'mike.davis@email.com' }
-          ]
-        }
-      ];
-      setStudents(mockStudents);
+      const response = await fetch('/api/teacher/students');
+      if (response.ok) {
+        const data = await response.json();
+        setStudents(data.map((student: any) => ({
+          _id: student.id,
+          firstName: student.first_name,
+          lastName: student.last_name,
+          grade: student.grade,
+          parents: student.parents.map((p: any) => ({
+            _id: p.id,
+            firstName: p.firstName,
+            lastName: p.lastName,
+            email: p.email
+          }))
+        })));
+      }
     } catch (error) {
       console.error('Error fetching students:', error);
     }
