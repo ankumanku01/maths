@@ -80,15 +80,23 @@ export default function StudentsManagement() {
 
     try {
       const studentData = {
-        ...formData,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        grade: formData.grade,
+        parents: formData.parents,
+        teachers: formData.teachers,
         photo: uploadedPhoto?.url,
       };
 
-      // TODO: Replace with actual API call
-      console.log('Creating student:', studentData);
+      const response = await fetch('/api/admin/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(studentData),
+      });
 
-      // Simulate API call
-      setTimeout(() => {
+      if (response.ok) {
         setFormData({
           firstName: '',
           lastName: '',
@@ -99,10 +107,14 @@ export default function StudentsManagement() {
         setUploadedPhoto(null);
         setShowForm(false);
         fetchStudents();
-        setIsLoading(false);
-      }, 1000);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to create student');
+      }
     } catch (error) {
       console.error('Error creating student:', error);
+      alert('Error creating student');
+    } finally {
       setIsLoading(false);
     }
   };
