@@ -84,7 +84,7 @@ export default function ProgressPage() {
     (filterSubject === 'all' || progress.subject === filterSubject)
   );
 
-  const subjects = [...new Set(progressData.map(p => p.subject))];
+  const subjects = Array.from(new Set(progressData.map(p => p.subject)));
   const selectedChildData = children.find(c => c.id === selectedChild);
 
   const getImprovementColor = (improvement: number) => {
