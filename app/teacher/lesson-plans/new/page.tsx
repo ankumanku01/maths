@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import FileUpload from '@/components/FileUpload';
 
 export default function NewLessonPlanPage() {
   const router = useRouter();
