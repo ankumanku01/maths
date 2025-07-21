@@ -19,28 +19,28 @@ export default function LessonPlansPage() {
   const [filter, setFilter] = useState<'all' | 'draft' | 'published' | 'archived'>('all');
 
   useEffect(() => {
-    // TODO: Fetch actual lesson plans from API
-    setLessonPlans([
-      {
-        _id: '1',
-        title: 'Introduction to Fractions',
-        grade: '4th Grade',
-        subject: 'Mathematics',
-        status: 'published',
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-15'
-      },
-      {
-        _id: '2',
-        title: 'Solar System Exploration',
-        grade: '4th Grade',
-        subject: 'Science',
-        status: 'draft',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-12'
-      },
-    ]);
+    fetchLessonPlans();
   }, []);
+
+  const fetchLessonPlans = async () => {
+    try {
+      const response = await fetch('/api/teacher/lesson-plans');
+      if (response.ok) {
+        const data = await response.json();
+        setLessonPlans(data.map((plan: any) => ({
+          _id: plan.id,
+          title: plan.title,
+          grade: plan.grade,
+          subject: plan.subject_name || 'General',
+          status: plan.status,
+          createdAt: plan.created_at,
+          updatedAt: plan.updated_at
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching lesson plans:', error);
+    }
+  };
 
   const filteredLessonPlans = filter === 'all' 
     ? lessonPlans 
