@@ -30,54 +30,63 @@ export default function ProgressPage() {
   const [filterSubject, setFilterSubject] = useState<string>('all');
 
   useEffect(() => {
-    // TODO: Fetch actual data from API
-    const mockChildren = [
-      { id: '1', name: 'Emma Johnson', grade: '4th Grade' },
-      { id: '2', name: 'Michael Johnson', grade: '2nd Grade' },
-    ];
-
-    const mockProgress = [
-      {
-        studentId: '1',
-        subject: 'Mathematics',
-        lessonTitle: 'Introduction to Fractions',
-        preTestScore: 72,
-        postTestScore: 89,
-        improvement: 17,
-        teacherNotes: 'Emma showed excellent understanding of fraction concepts. She improved significantly in problem-solving.',
-        date: '2024-01-15'
-      },
-      {
-        studentId: '1',
-        subject: 'Science',
-        lessonTitle: 'Solar System Exploration',
-        preTestScore: 85,
-        postTestScore: 94,
-        improvement: 9,
-        teacherNotes: 'Great enthusiasm for space topics. Emma asked thoughtful questions about planetary orbits.',
-        date: '2024-01-10'
-      },
-      {
-        studentId: '2',
-        subject: 'English',
-        lessonTitle: 'Reading Comprehension',
-        preTestScore: 88,
-        postTestScore: 95,
-        improvement: 7,
-        teacherNotes: 'Michael is becoming a confident reader. His vocabulary has expanded considerably.',
-        date: '2024-01-12'
-      },
-    ];
-
-    setChildren(mockChildren);
-    setProgressData(mockProgress);
-    
-    if (selectedChildId) {
-      setSelectedChild(selectedChildId);
-    } else if (mockChildren.length > 0) {
-      setSelectedChild(mockChildren[0].id);
-    }
+    fetchChildren();
   }, [selectedChildId]);
+
+  const fetchChildren = async () => {
+    try {
+      const response = await fetch('/api/parent/children');
+      if (response.ok) {
+        const data = await response.json();
+        const childrenData = data.map((child: any) => ({
+          id: child.id,
+          name: `${child.first_name} ${child.last_name}`,
+          grade: child.grade
+        }));
+        setChildren(childrenData);
+
+        if (selectedChildId) {
+          setSelectedChild(selectedChildId);
+        } else if (childrenData.length > 0) {
+          setSelectedChild(childrenData[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching children:', error);
+    }
+  };
+
+  const fetchProgressData = async (studentId: string, subject?: string) => {
+    try {
+      const params = new URLSearchParams({ studentId });
+      if (subject && subject !== 'all') {
+        params.append('subject', subject);
+      }
+
+      const response = await fetch(`/api/parent/progress?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProgressData(data.map((progress: any) => ({
+          studentId: progress.student_id,
+          subject: progress.subject_name || 'General',
+          lessonTitle: progress.lesson_title || 'Lesson',
+          preTestScore: progress.pre_test_score || 0,
+          postTestScore: progress.post_test_score || 0,
+          improvement: progress.improvement || 0,
+          teacherNotes: progress.teacher_notes || '',
+          date: progress.lesson_date || progress.created_at
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching progress data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedChild) {
+      fetchProgressData(selectedChild, filterSubject);
+    }
+  }, [selectedChild, filterSubject]);
 
   const filteredProgress = progressData.filter(progress => 
     progress.studentId === selectedChild &&
