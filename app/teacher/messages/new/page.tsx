@@ -77,22 +77,30 @@ export default function NewMessagePage() {
 
     try {
       const messageData = {
+        recipientIds: selectedParents,
         studentId: selectedStudent,
-        parentIds: selectedParents,
         subject: formData.subject,
         content: formData.content,
       };
 
-      // TODO: Replace with actual API call
-      console.log('Sending message:', messageData);
+      const response = await fetch('/api/teacher/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
 
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
+      if (response.ok) {
         router.push('/teacher/messages');
-      }, 1000);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to send message');
+      }
     } catch (error) {
       console.error('Error sending message:', error);
+      alert('Error sending message');
+    } finally {
       setIsSubmitting(false);
     }
   };
