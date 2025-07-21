@@ -38,30 +38,34 @@ export default function TeacherMessagesPage() {
 
   const fetchMessages = async () => {
     try {
-      // TODO: Replace with actual API call
-      const mockMessages: Message[] = [
-        {
-          _id: '1',
-          fromUser: { _id: 'parent1', firstName: 'Sarah', lastName: 'Johnson', role: 'parent' },
-          toUser: { _id: 'teacher1', firstName: 'Mrs.', lastName: 'Smith', role: 'teacher' },
-          student: { _id: 'student1', firstName: 'Emma', lastName: 'Johnson' },
-          subject: 'Question about Emma\'s math homework',
-          content: 'Hi Mrs. Smith, Emma is having trouble with the fraction problems from yesterday. Could you provide some additional guidance?',
-          isRead: false,
-          createdAt: '2024-01-15T10:30:00Z'
-        },
-        {
-          _id: '2',
-          fromUser: { _id: 'teacher1', firstName: 'Mrs.', lastName: 'Smith', role: 'teacher' },
-          toUser: { _id: 'parent2', firstName: 'Mike', lastName: 'Davis', role: 'parent' },
-          student: { _id: 'student2', firstName: 'Alex', lastName: 'Davis' },
-          subject: 'Alex\'s excellent progress in Science',
-          content: 'I wanted to share that Alex has shown remarkable improvement in science. His understanding of the solar system unit was outstanding.',
-          isRead: true,
-          createdAt: '2024-01-14T14:20:00Z'
-        }
-      ];
-      setMessages(mockMessages);
+      const response = await fetch('/api/teacher/messages');
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.map((msg: any) => ({
+          _id: msg.id,
+          fromUser: {
+            _id: msg.from_user.id,
+            firstName: msg.from_user.firstName,
+            lastName: msg.from_user.lastName,
+            role: msg.from_user.role
+          },
+          toUser: {
+            _id: msg.to_user.id,
+            firstName: msg.to_user.firstName,
+            lastName: msg.to_user.lastName,
+            role: msg.to_user.role
+          },
+          student: msg.student ? {
+            _id: msg.student.id,
+            firstName: msg.student.firstName,
+            lastName: msg.student.lastName
+          } : undefined,
+          subject: msg.subject,
+          content: msg.content,
+          isRead: msg.is_read,
+          createdAt: msg.created_at
+        })));
+      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
