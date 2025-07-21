@@ -23,16 +23,29 @@ export default function NewLessonPlanPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement API call to create lesson plan
-      console.log('Creating lesson plan:', formData);
-      
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
+      const lessonPlanData = {
+        ...formData,
+        pdfFile: uploadedFile?.url,
+      };
+
+      const response = await fetch('/api/teacher/lesson-plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(lessonPlanData),
+      });
+
+      if (response.ok) {
         router.push('/teacher/lesson-plans');
-      }, 1000);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to create lesson plan');
+      }
     } catch (error) {
       console.error('Error creating lesson plan:', error);
+      alert('Error creating lesson plan');
+    } finally {
       setIsSubmitting(false);
     }
   };
