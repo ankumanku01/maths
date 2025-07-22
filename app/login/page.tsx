@@ -29,14 +29,21 @@ export default function LoginPage() {
         setError('Invalid email or password');
       } else {
         const session = await getSession();
-        
+        console.log('Login successful, session:', session);
+
         // Redirect based on role
         if (session?.user?.role === 'admin') {
+          console.log('Redirecting to admin dashboard');
           router.push('/admin');
         } else if (session?.user?.role === 'teacher') {
+          console.log('Redirecting to teacher dashboard');
           router.push('/teacher');
         } else if (session?.user?.role === 'parent') {
+          console.log('Redirecting to parent dashboard');
           router.push('/parent');
+        } else {
+          console.log('No role found, redirecting to login');
+          setError('User role not found. Please contact administrator.');
         }
       }
     } catch (error) {
