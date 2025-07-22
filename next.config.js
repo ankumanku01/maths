@@ -7,9 +7,6 @@ const nextConfig = {
   experimental: {
     esmExternals: false,
   },
-
-  // Disable static generation for auth-protected app
-  output: 'standalone',
   
   images: {
     domains: ['edumanage-prod.netlify.app', 'localhost'],
