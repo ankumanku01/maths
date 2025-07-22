@@ -7,10 +7,6 @@ const nextConfig = {
   experimental: {
     esmExternals: false,
   },
-
-  // Force all pages to be server-side rendered
-  output: 'export',
-  generateStaticParams: false,
   
   images: {
     domains: ['edumanage-prod.netlify.app', 'localhost'],
