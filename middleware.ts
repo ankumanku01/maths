@@ -10,7 +10,7 @@ export default withAuth(
         const pathname = req.nextUrl.pathname;
 
         // Public routes - always allow
-        if (pathname === '/' || pathname === '/login' || pathname.startsWith('/api/auth/') || pathname === '/api/init') {
+        if (pathname === '/' || pathname === '/login' || pathname.startsWith('/api/auth') || pathname === '/api/init') {
           return true;
         }
 
