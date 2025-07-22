@@ -3,15 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Disable static optimization completely for auth-heavy app
+  // Disable static optimization for pages with getServerSideProps
   experimental: {
     esmExternals: false,
-  },
-
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
   },
   
   images: {
