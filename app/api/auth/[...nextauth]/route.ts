@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { query } from '@/lib/db';
 
 const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'credentials',
