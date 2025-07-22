@@ -66,15 +66,19 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT callback - token:', !!token, 'user:', !!user);
       if (user) {
         token.role = user.role;
+        console.log('JWT callback - added role to token:', user.role);
       }
       return token;
     },
     async session({ session, token }) {
+      console.log('Session callback - session:', !!session, 'token:', !!token);
       if (token) {
         session.user.id = token.sub;
         session.user.role = token.role;
+        console.log('Session callback - final session:', session.user);
       }
       return session;
     },
