@@ -28,23 +28,26 @@ export default function LoginPage() {
       if (result?.error) {
         setError('Invalid email or password');
       } else {
-        const session = await getSession();
-        console.log('Login successful, session:', session);
+        // Wait a bit for the session to be updated
+        setTimeout(async () => {
+          const session = await getSession();
+          console.log('Login successful, session:', session);
 
-        // Redirect based on role
-        if (session?.user?.role === 'admin') {
-          console.log('Redirecting to admin dashboard');
-          router.push('/admin');
-        } else if (session?.user?.role === 'teacher') {
-          console.log('Redirecting to teacher dashboard');
-          router.push('/teacher');
-        } else if (session?.user?.role === 'parent') {
-          console.log('Redirecting to parent dashboard');
-          router.push('/parent');
-        } else {
-          console.log('No role found, redirecting to login');
-          setError('User role not found. Please contact administrator.');
-        }
+          // Redirect based on role
+          if (session?.user?.role === 'admin') {
+            console.log('Redirecting to admin dashboard');
+            window.location.href = '/admin';
+          } else if (session?.user?.role === 'teacher') {
+            console.log('Redirecting to teacher dashboard');
+            window.location.href = '/teacher';
+          } else if (session?.user?.role === 'parent') {
+            console.log('Redirecting to parent dashboard');
+            window.location.href = '/parent';
+          } else {
+            console.log('No role found, session:', session);
+            setError('User role not found. Please contact administrator.');
+          }
+        }, 100);
       }
     } catch (error) {
       setError('An error occurred. Please try again.');
