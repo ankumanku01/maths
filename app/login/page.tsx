@@ -25,29 +25,28 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      if (result?.error) {
-        setError('Invalid email or password');
-      } else {
-        // Wait a bit for the session to be updated
-        setTimeout(async () => {
-          const session = await getSession();
-          console.log('Login successful, session:', session);
+      console.log('SignIn result:', result);
 
-          // Redirect based on role
-          if (session?.user?.role === 'admin') {
-            console.log('Redirecting to admin dashboard');
-            window.location.href = '/admin';
-          } else if (session?.user?.role === 'teacher') {
-            console.log('Redirecting to teacher dashboard');
-            window.location.href = '/teacher';
-          } else if (session?.user?.role === 'parent') {
-            console.log('Redirecting to parent dashboard');
-            window.location.href = '/parent';
-          } else {
-            console.log('No role found, session:', session);
-            setError('User role not found. Please contact administrator.');
-          }
-        }, 100);
+      if (result?.error) {
+        console.error('Login error:', result.error);
+        setError('Invalid email or password');
+      } else if (result?.ok) {
+        console.log('Login successful, getting session...');
+
+        // Get the updated session
+        const session = await getSession();
+        console.log('Session after login:', session);
+
+        if (session?.user?.role) {
+          // Use Next.js router for better navigation
+          const targetUrl = `/${session.user.role}`;
+          console.log('Redirecting to:', targetUrl);
+          router.push(targetUrl);
+        } else {
+          setError('User role not found. Please contact administrator.');
+        }
+      } else {
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
       setError('An error occurred. Please try again.');
