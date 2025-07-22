@@ -7,6 +7,9 @@ const nextConfig = {
   experimental: {
     esmExternals: false,
   },
+
+  // Configure output to skip static generation for protected routes
+  output: 'standalone',
   
   images: {
     domains: ['edumanage-prod.netlify.app', 'localhost'],
