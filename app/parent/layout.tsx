@@ -37,8 +37,7 @@ export default function ParentLayout({
   }
 
   return (
-    <ClientOnly fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-xl">Loading...</div></div>}>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <nav className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
@@ -102,7 +101,6 @@ export default function ParentLayout({
             {children}
           </main>
         </div>
-      </div>
-    </ClientOnly>
+    </div>
   );
 }
