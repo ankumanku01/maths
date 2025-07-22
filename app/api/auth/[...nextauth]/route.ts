@@ -5,6 +5,7 @@ import { query } from '@/lib/db';
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     CredentialsProvider({
       name: 'credentials',
