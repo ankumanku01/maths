@@ -46,9 +46,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/teacher/:path*',
-    '/parent/:path*',
-    '/api/:path*'
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ]
 };
